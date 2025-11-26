@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    command: ["redis-server", "--save", "60", "1"]
+
+  web:
+    build: ./backend
+    command: sh -c "./entrypoint.sh"
+    volumes:
+      - ./backend:/app
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  celery_worker:
+    build: ./backend
+    command: sh -c "./celery-entrypoint.sh celery -A petcare worker --loglevel=info"
+    volumes:
+      - ./backend:/app
+    env_file: .env
+    depends_on:
+      - redis
+      - db
+
+  celery_beat:
+    build: ./backend
+    command: sh -c "./celery-entrypoint.sh celery -A petcare beat --loglevel=info --scheduler celery.beat.PersistentScheduler"
+    volumes:
+      - ./backend:/app
+    env_file: .env
+    depends_on:
+      - redis
+      - db
+
+volumes:
+  postgres_data:
