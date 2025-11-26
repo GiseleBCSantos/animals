@@ -1,19 +1,27 @@
 #!/bin/sh
 
-echo "Esperando o banco de dados iniciar..."
+DB_HOST=${POSTGRES_HOST:-db}
+DB_PORT=${POSTGRES_PORT:-5432}
 
-# Tenta se conectar várias vezes
-while ! nc -z db 5432; do
-  echo "Postgres ainda iniciando..."
+echo "Esperando o banco de dados ($DB_HOST:$DB_PORT) iniciar..."
+
+while ! nc -z "$DB_HOST" "$DB_PORT"; do
+  echo "Banco ainda iniciando..."
   sleep 1
 done
 
-echo "Postgres está pronto! Rodando migrações..."
+echo "Banco pronto! Rodando migrações..."
 python manage.py migrate --noinput
 
 echo "Coletando arquivos estáticos..."
 python manage.py collectstatic --noinput
 
-echo "Iniciando o servidor Django..."
-# Escuta em 0.0.0.0 para aceitar conexões externas
-exec python manage.py runserver 0.0.0.0:8000
+PORT=${PORT:-8000}
+
+echo "Iniciando Django..."
+
+if [ "$RUNNING_IN_RENDER" = "true" ]; then
+    exec gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
+fi
+
+exec python manage.py runserver 0.0.0.0:$PORT
