@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.conf import settings
 
@@ -15,6 +16,7 @@ class Animal(models.Model):
         ('other', 'Other'),
     ]
     
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     tutor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pets')
     name = models.CharField(max_length=120)
     species = models.CharField(max_length=20, choices=SPECIES_CHOICES)
