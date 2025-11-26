@@ -3,8 +3,11 @@ from rest_framework import viewsets, permissions
 from .models import Animal
 from .serializers import AnimalSerializer
 from .permissions import IsTutorOrReadOnly
+from drf_spectacular.utils import extend_schema
 
 
+
+@extend_schema(tags=['Animals'])
 class AnimalViewSet(viewsets.ModelViewSet):
     serializer_class = AnimalSerializer
     permission_classes = (permissions.IsAuthenticated,)
