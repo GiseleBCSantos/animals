@@ -122,9 +122,6 @@ CELERY_BEAT_SCHEDULE = {
     }
 }
 
-# OpenAI
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
 # Tempo local
 TIME_ZONE = 'UTC'
 USE_I18N = True
