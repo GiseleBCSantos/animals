@@ -19,6 +19,8 @@ python manage.py collectstatic --noinput
 PORT=${PORT:-8000}
 
 echo "Iniciando Django..."
+echo "Rodando no render? $RUNNING_IN_RENDER"
+echo "Usando a porta $PORT"
 
 if [ "$RUNNING_IN_RENDER" = "true" ]; then
     exec gunicorn petcare.wsgi:application --bind 0.0.0.0:$PORT

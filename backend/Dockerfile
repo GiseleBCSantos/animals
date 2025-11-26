@@ -6,7 +6,6 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV IN_DOCKER=true
 
-
 COPY requirements.txt /app/
 
 RUN apt-get update && \
@@ -15,8 +14,9 @@ RUN apt-get update && \
     pip install -r requirements.txt && \
     rm -rf /var/lib/apt/lists/*
 
-
 COPY . /app/
 
 RUN chmod +x /app/entrypoint.sh
 RUN chmod +x /app/celery-entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
