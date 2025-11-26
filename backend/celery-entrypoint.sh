@@ -1,3 +1,4 @@
+#!/bin/sh
 DB_HOST=${POSTGRES_HOST:-db}
 DB_PORT=${POSTGRES_PORT:-5432}
 
@@ -9,4 +10,4 @@ while ! nc -z "$DB_HOST" "$DB_PORT"; do
 done
 
 echo "Postgres OK! Iniciando Celery..."
-exec "$@"
+exec "$@"   

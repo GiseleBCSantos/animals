@@ -9,10 +9,16 @@ ENV IN_DOCKER=true
 COPY requirements.txt /app/
 
 RUN apt-get update && \
-    apt-get install -y netcat-openbsd && \
-    pip install --upgrade pip && \
-    pip install -r requirements.txt && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y \
+        netcat-openbsd \
+        libjpeg-dev \
+        zlib1g-dev \
+        libpng-dev \
+        gcc \
+        && pip install --upgrade pip \
+        && pip install -r requirements.txt \
+        && rm -rf /var/lib/apt/lists/*
+
 
 COPY . /app/
 
