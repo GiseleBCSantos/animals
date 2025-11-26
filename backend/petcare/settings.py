@@ -117,8 +117,8 @@ from celery.schedules import crontab
 
 CELERY_BEAT_SCHEDULE = {
     'gerar-pensamentos-todos-os-dias-07': {
-        'task': 'animals.tasks.gerar_pensamentos_diarios',
-        "schedule": crontab(minute="*/15"),
+        'task': 'animals.tasks.generate_daily_thoughts',
+        "schedule": crontab(minute="*/5"),
     }
 }
 
