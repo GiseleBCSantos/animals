@@ -14,42 +14,44 @@ class Command(BaseCommand):
 
 
         tutors_data = [
-            {"username": "alice", "email": "alice@example.com", "nome": "Alice Santos"},
-            {"username": "bruno", "email": "bruno@example.com", "nome": "Bruno Almeida"},
-            {"username": "carla", "email": "carla@example.com", "nome": "Carla Ribeiro"},
+            {"username": "alice", "email": "alice@example.com", "name": "Alice Santos"},
+            {"username": "bruno", "email": "bruno@example.com", "name": "Bruno Almeida"},
+            {"username": "carla", "email": "carla@example.com", "name": "Carla Ribeiro"},
         ]
 
+        species_list = ["dog", "cat", "rabbit", "bird", "hamster", "fish", "reptile", "horse", "other"]
+        animal_names = ["Rex", "Luna", "Mimi", "Bolt", "Tico", "Nala", "Foxy", "Toby", "Belinha", "Fred"]
+        breeds = ["Mixed", "Labrador", "Persian", "Siamese", "Golden", "Mini Lop", "Cockatiel", "Syrian", "Betta", "Corn Snake", "Arabian"]
 
-        especies = ["Cachorro", "Gato", "Coelho", "Pássaro", "Hamster"]
-        nomes_animais = ["Rex", "Luna", "Mimi", "Bolt", "Tico", "Nala", "Foxy", "Toby", "Belinha", "Fred"]
 
-
-        self.stdout.write(self.style.WARNING("Limpando dados antigos..."))
+        self.stdout.write(self.style.WARNING("Deleting old data..."))
         Animal.objects.all().delete()
         User.objects.filter(username__in=[t["username"] for t in tutors_data]).delete()
 
-
-        self.stdout.write(self.style.SUCCESS("Criando tutores..."))
+        self.stdout.write(self.style.SUCCESS("Creating tutors..."))
         tutors = []
         for data in tutors_data:
-            user = User(username=data["username"], email=data["email"], nome=data["nome"])
+            user = User(username=data["username"], email=data["email"], name=data["name"])
             user.set_password("123456")
             user.save()
             tutors.append(user)
 
-
-        self.stdout.write(self.style.SUCCESS("Criando animais..."))
+        self.stdout.write(self.style.SUCCESS("Creating animals..."))
         pk = 1
         for tutor in tutors:
-            for _ in range(2):
+            for _ in range(10):
                 Animal.objects.create(
-                id=pk,
-                tutor=tutor,
-                nome=random.choice(nomes_animais),
-                especie=random.choice(especies),
-                data_nascimento=timezone.now().date(),
+                    id=pk,
+                    tutor=tutor,
+                    name=random.choice(animal_names),
+                    species=random.choice(species_list),
+                    breed=random.choice(breeds),
+                    age=random.randint(1, 15),
+                    photo=None,
+                    thought_of_the_day=None,
+                    thought_generated_at=None,
                 )
                 pk += 1
 
 
-        self.stdout.write(self.style.SUCCESS("Mock criado com sucesso!"))
+        self.stdout.write(self.style.SUCCESS("Mock data created successfully!"))
