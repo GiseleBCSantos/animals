@@ -39,7 +39,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Creating animals..."))
         pk = 1
         for tutor in tutors:
-            for _ in range(10):
+            for _ in range(3):
                 Animal.objects.create(
                     id=pk,
                     tutor=tutor,
