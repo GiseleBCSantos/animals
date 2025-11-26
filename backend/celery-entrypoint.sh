@@ -1,8 +1,9 @@
-#!/bin/sh
+DB_HOST=${POSTGRES_HOST:-db}
+DB_PORT=${POSTGRES_PORT:-5432}
 
-echo "Esperando o banco de dados iniciar para o Celery..."
+echo "Esperando o banco de dados ($DB_HOST:$DB_PORT) iniciar para o Celery..."
 
-while ! nc -z db 5432; do
+while ! nc -z "$DB_HOST" "$DB_PORT"; do
   echo "Postgres ainda iniciando..."
   sleep 1
 done
