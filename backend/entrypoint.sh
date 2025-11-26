@@ -21,7 +21,7 @@ PORT=${PORT:-8000}
 echo "Iniciando Django..."
 
 if [ "$RUNNING_IN_RENDER" = "true" ]; then
-    exec gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT
+    exec gunicorn petcare.wsgi:application --bind 0.0.0.0:$PORT
 fi
 
 exec python manage.py runserver 0.0.0.0:$PORT
