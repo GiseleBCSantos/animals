@@ -32,7 +32,8 @@ class AnimalAPITestCase(APITestCase):
         url = reverse('animal-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(any(a['id'] == self.animal.id for a in response.data))
+        results = response.data["results"]
+        self.assertTrue(any(a["id"] == str(self.animal.id) for a in results))
 
     def test_retrieve_animal(self):
         url = reverse('animal-detail', args=[self.animal.id])
