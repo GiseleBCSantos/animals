@@ -27,8 +27,9 @@ jobs:
 
       - name: Run Django tests
         env:
-          SECRET_KEY: "test_$3cr3t_k3y_ci_only_!@#%&*()-0987654321"
+          DJANGO_SECRET_KEY: "test_$3cr3t_k3y_ci_only_!@#%&*()-0987654321"
           DEBUG: "True"
           DJANGO_TESTING: "1"
+          DJANGO_SETTINGS_MODULE: petcare.settings
         run: |
           pytest
