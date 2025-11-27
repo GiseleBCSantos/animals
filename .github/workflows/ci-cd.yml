@@ -1,0 +1,34 @@
+name: Animals Monorepo CI/CD
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+jobs:
+  # ---------- BACKEND ----------
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Django tests
+        env:
+          SECRET_KEY: "test_$3cr3t_k3y_ci_only_!@#%&*()-0987654321"
+          DEBUG: "True"
+        run: |
+          cd backend
+          pytest
