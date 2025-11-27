@@ -30,5 +30,4 @@ jobs:
           SECRET_KEY: "test_$3cr3t_k3y_ci_only_!@#%&*()-0987654321"
           DEBUG: "True"
         run: |
-          cd backend
           pytest
