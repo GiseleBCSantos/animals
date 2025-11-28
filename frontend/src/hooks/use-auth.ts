@@ -2,6 +2,7 @@ import { useEffect, useCallback } from "react";
 import { authService } from "@/lib/services/auth";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import type { LoginCredentials, RegisterData } from "@/lib/types";
+import { useNavigate } from "react-router-dom";
 
 export function useAuth() {
   const {
@@ -15,6 +16,8 @@ export function useAuth() {
     setDevMode,
     logout: storeLogout,
   } = useAuthStore();
+
+  const navigate = useNavigate();
 
   const isLoading = !user && !!tokens;
 
@@ -52,6 +55,7 @@ export function useAuth() {
   const logout = () => {
     authService.logout();
     storeLogout();
+    navigate("/login");
   };
 
   return {
