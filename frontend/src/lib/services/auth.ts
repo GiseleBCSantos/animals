@@ -36,8 +36,8 @@ export const authService = {
   },
 
   logout(): void {
+    storage.clearTokens();
     useAuthStore.getState().logout();
-    window.location.href = "/login";
   },
 
   isAuthenticated(): boolean {
