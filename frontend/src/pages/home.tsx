@@ -1,0 +1,21 @@
+import { Header } from "@/components/layout/header"
+import { Footer } from "@/components/layout/footer"
+import { HeroSection } from "@/components/landing/hero-section"
+import { FeaturesSection } from "@/components/landing/features-section"
+import { SpeciesSection } from "@/components/landing/species-section"
+import { CTASection } from "@/components/landing/cta-section"
+
+export default function HomePage() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <HeroSection />
+        <FeaturesSection />
+        <SpeciesSection />
+        <CTASection />
+      </main>
+      <Footer />
+    </div>
+  )
+}
