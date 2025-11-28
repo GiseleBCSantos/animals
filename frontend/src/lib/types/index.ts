@@ -5,6 +5,13 @@ export interface User {
   email: string;
 }
 
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
 export interface Animal {
   id: string;
   tutor: number;
