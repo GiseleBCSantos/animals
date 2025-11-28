@@ -27,6 +27,21 @@ services:
       - db
       - redis
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    command: npm run dev -- --host
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - web
+
   celery_worker:
     build: ./backend
     command: sh -c "./celery-entrypoint.sh celery -A petcare worker --loglevel=info"
