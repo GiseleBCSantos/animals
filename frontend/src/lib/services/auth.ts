@@ -36,6 +36,7 @@ export const authService = {
   },
 
   logout(): void {
+    storage.clearTokens();
     useAuthStore.getState().logout();
   },
 
