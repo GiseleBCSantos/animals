@@ -1,7 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { animalsService, type CreateAnimalData, type UpdateAnimalData } from "@/lib/services/animals"
-import type { Animal } from "@/lib/types"
-import { useAuthStore } from "@/lib/stores/auth-store"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  animalsService,
+  type CreateAnimalData,
+  type UpdateAnimalData,
+} from "@/lib/services/animals";
+import type { Animal } from "@/lib/types";
+import { useAuthStore } from "@/lib/stores/auth-store";
+import { authService } from "@/lib/services/auth";
 
 // Mock data for dev mode
 const MOCK_ANIMALS: Animal[] = [
@@ -13,7 +18,8 @@ const MOCK_ANIMALS: Animal[] = [
     breed: "Golden Retriever",
     age: 3,
     photo: null,
-    thought_of_the_day: "Hoje eu vi um esquilo e fingi que nao vi, porque sou um cavalheiro.",
+    thought_of_the_day:
+      "Hoje eu vi um esquilo e fingi que nao vi, porque sou um cavalheiro.",
     thought_generated_at: new Date().toISOString(),
   },
   {
@@ -35,7 +41,8 @@ const MOCK_ANIMALS: Animal[] = [
     breed: "Calopsita",
     age: 2,
     photo: null,
-    thought_of_the_day: "Por que o humano fica olhando pra aquela caixa brilhante o dia todo?",
+    thought_of_the_day:
+      "Por que o humano fica olhando pra aquela caixa brilhante o dia todo?",
     thought_generated_at: new Date().toISOString(),
   },
   {
@@ -71,23 +78,24 @@ const MOCK_ANIMALS: Animal[] = [
     thought_of_the_day: "Minha roda e meu trono. Giro, logo existo.",
     thought_generated_at: new Date().toISOString(),
   },
-]
+];
 
-const ANIMALS_KEY = ["animals"]
+const ANIMALS_KEY = ["animals"];
 
 export function useAnimalsQuery() {
-  const { isDevMode } = useAuthStore()
-  const queryClient = useQueryClient()
+  const { isDevMode } = useAuthStore();
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ANIMALS_KEY,
     queryFn: async () => {
       if (isDevMode) {
-        return MOCK_ANIMALS
+        return MOCK_ANIMALS;
       }
-      return animalsService.getAll()
+      const paginated = await animalsService.getAll();
+      return paginated.results;
     },
-  })
+  });
 
   const createMutation = useMutation({
     mutationFn: async (animalData: CreateAnimalData) => {
@@ -102,43 +110,63 @@ export function useAnimalsQuery() {
           photo: null,
           thought_of_the_day: null,
           thought_generated_at: null,
-        }
-        return newAnimal
+        };
+        return newAnimal;
       }
-      return animalsService.create(animalData)
+      return animalsService.create(animalData);
     },
     onSuccess: (newAnimal) => {
-      queryClient.setQueryData<Animal[]>(ANIMALS_KEY, (old) => [...(old || []), newAnimal])
+      queryClient.setQueryData<Animal[]>(ANIMALS_KEY, (old) => [
+        ...(old || []),
+        newAnimal,
+      ]);
     },
-  })
+  });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: UpdateAnimalData }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: UpdateAnimalData;
+    }) => {
       if (isDevMode) {
-        const animals = queryClient.getQueryData<Animal[]>(ANIMALS_KEY) || []
-        const animal = animals.find((a) => a.id === id)
-        return { ...animal, ...data } as Animal
+        const animals = queryClient.getQueryData<Animal[]>(ANIMALS_KEY) || [];
+        const animal = animals.find((a) => a.id === id);
+        return { ...animal, ...data } as Animal;
       }
-      return animalsService.update(id, data)
+      return animalsService.update(id, data);
     },
     onSuccess: (updatedAnimal) => {
       queryClient.setQueryData<Animal[]>(ANIMALS_KEY, (old) =>
-        old?.map((a) => (a.id === updatedAnimal.id ? updatedAnimal : a)),
-      )
+        old?.map((a) => (a.id === updatedAnimal.id ? updatedAnimal : a))
+      );
     },
-  })
+  });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       if (!isDevMode) {
-        await animalsService.delete(id)
+        await animalsService.delete(id);
       }
-      return id
+      return id;
     },
     onSuccess: (id) => {
-      queryClient.setQueryData<Animal[]>(ANIMALS_KEY, (old) => old?.filter((a) => a.id !== id))
+      queryClient.setQueryData<Animal[]>(ANIMALS_KEY, (old) =>
+        old?.filter((a) => a.id !== id)
+      );
     },
-  })
+  });
+
+  const generateThoughtOfTheDay = useMutation({
+    mutationFn: async () => {
+      if (isDevMode) {
+        return { message: "Pensamento do dia gerado com sucesso (modo dev)." };
+      }
+      return authService.generateThoughts();
+    },
+  });
 
   return {
     animals: data || [],
@@ -146,10 +174,12 @@ export function useAnimalsQuery() {
     error,
     refetch,
     createAnimal: createMutation.mutateAsync,
-    updateAnimal: (id: string, data: UpdateAnimalData) => updateMutation.mutateAsync({ id, data }),
+    updateAnimal: (id: string, data: UpdateAnimalData) =>
+      updateMutation.mutateAsync({ id, data }),
     deleteAnimal: deleteMutation.mutateAsync,
+    generateThoughtOfTheDay: generateThoughtOfTheDay.mutateAsync,
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
-  }
+  };
 }
