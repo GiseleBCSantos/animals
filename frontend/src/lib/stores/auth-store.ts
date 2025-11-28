@@ -1,17 +1,17 @@
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
-import type { User, AuthTokens } from "@/lib/types"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { User, AuthTokens } from "@/lib/types";
 
 interface AuthState {
-  user: User | null
-  tokens: AuthTokens | null
-  isAuthenticated: boolean
-  isDevMode: boolean
-  setUser: (user: User | null) => void
-  setTokens: (tokens: AuthTokens | null) => void
-  setIsAuthenticated: (isAuthenticated: boolean) => void
-  setDevMode: (isDevMode: boolean) => void
-  logout: () => void
+  user: User | null;
+  tokens: AuthTokens | null;
+  isAuthenticated: boolean;
+  isDevMode: boolean;
+  setUser: (user: User | null) => void;
+  setTokens: (tokens: AuthTokens | null) => void;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
+  setDevMode: (isDevMode: boolean) => void;
+  logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -20,7 +20,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       tokens: null,
       isAuthenticated: false,
-      isDevMode: true, // Enable dev mode by default to bypass auth
+      isDevMode: false, // Enable dev mode by default to bypass auth
       setUser: (user) => set({ user }),
       setTokens: (tokens) => set({ tokens }),
       setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
@@ -29,6 +29,6 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-    },
-  ),
-)
+    }
+  )
+);

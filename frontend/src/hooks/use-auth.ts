@@ -1,34 +1,44 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { authService } from "@/lib/services/auth";
-import { storage } from "@/lib/utils/storage";
-import type { User, LoginCredentials, RegisterData } from "@/lib/types";
+import { useAuthStore } from "@/lib/stores/auth-store";
+import type { LoginCredentials, RegisterData } from "@/lib/types";
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const {
+    user,
+    tokens,
+    isAuthenticated,
+    isDevMode,
+    setUser,
+    setTokens,
+    setIsAuthenticated,
+    setDevMode,
+    logout: storeLogout,
+  } = useAuthStore();
+
+  const isLoading = !user && !!tokens;
 
   const fetchUser = useCallback(async () => {
-    if (!storage.isAuthenticated()) {
-      setIsLoading(false);
+    if (!tokens) {
+      setIsAuthenticated(false);
+      setUser(null);
       return;
     }
-
     try {
       const userData = await authService.getProfile();
+
       setUser(userData);
       setIsAuthenticated(true);
     } catch {
-      storage.clearTokens();
+      setUser(null);
       setIsAuthenticated(false);
-    } finally {
-      setIsLoading(false);
+      storeLogout();
     }
-  }, []);
+  }, [tokens, setUser, setIsAuthenticated, storeLogout]);
 
   useEffect(() => {
     fetchUser();
-  }, [fetchUser]);
+  }, [tokens]);
 
   const login = async (credentials: LoginCredentials) => {
     await authService.login(credentials);
@@ -41,17 +51,18 @@ export function useAuth() {
 
   const logout = () => {
     authService.logout();
-    setUser(null);
-    setIsAuthenticated(false);
+    storeLogout();
   };
 
   return {
     user,
     isLoading,
     isAuthenticated,
+    isDevMode,
     login,
     register,
     logout,
     refetch: fetchUser,
+    setDevMode,
   };
 }
