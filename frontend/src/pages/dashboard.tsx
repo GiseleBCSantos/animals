@@ -42,6 +42,7 @@ export default function DashboardPage() {
     createAnimal,
     updateAnimal,
     deleteAnimal,
+    generateThoughtOfTheDay,
     refetch,
   } = useAnimalsQuery();
 
@@ -89,6 +90,7 @@ export default function DashboardPage() {
         await new Promise((resolve) => setTimeout(resolve, 1500));
         toast("Pensamentos gerados! Seus pets tem novos pensamentos do dia.");
       } else {
+        await generateThoughtOfTheDay();
         await refetch();
         toast("Pensamentos gerados! Seus pets tem novos pensamentos do dia.");
       }
@@ -151,25 +153,28 @@ export default function DashboardPage() {
                 className="pl-10"
               />
             </div>
-            <Select
-              value={speciesFilter}
-              onValueChange={(v) =>
-                setSpeciesFilter(v as AnimalSpecies | "all")
-              }
-            >
-              <SelectTrigger className="w-full sm:w-48">
-                <Filter className="h-4 w-4 mr-2 flex-shrink-0" />
-                <SelectValue placeholder="Filtrar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas as especies</SelectItem>
-                {SPECIES_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.emoji} {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+
+            <div className="flex-1">
+              <Select
+                value={speciesFilter}
+                onValueChange={(v) =>
+                  setSpeciesFilter(v as AnimalSpecies | "all")
+                }
+              >
+                <SelectTrigger>
+                  <Filter className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <SelectValue placeholder="Filtrar" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as especies</SelectItem>
+                  {SPECIES_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.emoji} {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
@@ -245,7 +250,7 @@ export default function DashboardPage() {
             )}
           </motion.div>
         ) : (
-          <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
             <AnimatePresence>
               {filteredAnimals.map((animal, index) => (
                 <motion.div
