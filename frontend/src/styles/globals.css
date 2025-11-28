@@ -1,0 +1,251 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Pet-friendly warm color palette for PetCare app */
+:root {
+  --background: #fdf8f3;
+  --foreground: #2d1f14;
+  --card: #ffffff;
+  --card-foreground: #2d1f14;
+  --popover: #ffffff;
+  --popover-foreground: #2d1f14;
+  --primary: #e67e22;
+  --primary-foreground: #ffffff;
+  --secondary: #f5e6d3;
+  --secondary-foreground: #2d1f14;
+  --muted: #f9f1e8;
+  --muted-foreground: #7d6b5d;
+  --accent: #27ae60;
+  --accent-foreground: #ffffff;
+  --destructive: #e74c3c;
+  --destructive-foreground: #ffffff;
+  --border: #e8ddd0;
+  --input: #e8ddd0;
+  --ring: #e67e22;
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.75rem;
+  --sidebar: #fdfaf7;
+  --sidebar-foreground: #2d1f14;
+  --sidebar-primary: #e67e22;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5e6d3;
+  --sidebar-accent-foreground: #2d1f14;
+  --sidebar-border: #e8ddd0;
+  --sidebar-ring: #e67e22;
+
+  /* Animal-specific colors as CSS variables */
+  --animal-dog: #e67e22;
+  --animal-dog-light: #fef3e8;
+  --animal-dog-border: #fdba74;
+  --animal-cat: #9b59b6;
+  --animal-cat-light: #faf5ff;
+  --animal-cat-border: #d8b4fe;
+  --animal-bird: #3498db;
+  --animal-bird-light: #f0f9ff;
+  --animal-bird-border: #7dd3fc;
+  --animal-rabbit: #f1c40f;
+  --animal-rabbit-light: #fefce8;
+  --animal-rabbit-border: #fde047;
+  --animal-hamster: #e74c3c;
+  --animal-hamster-light: #fef2f2;
+  --animal-hamster-border: #fca5a5;
+  --animal-fish: #1abc9c;
+  --animal-fish-light: #f0fdfa;
+  --animal-fish-border: #5eead4;
+  --animal-reptile: #27ae60;
+  --animal-reptile-light: #f0fdf4;
+  --animal-reptile-border: #86efac;
+  --animal-horse: #8b4513;
+  --animal-horse-light: #fffbeb;
+  --animal-horse-border: #fbbf24;
+  --animal-other: #95a5a6;
+  --animal-other-light: #f8fafc;
+  --animal-other-border: #cbd5e1;
+}
+
+.dark {
+  --background: #1a1412;
+  --foreground: #faf7f5;
+  --card: #252019;
+  --card-foreground: #faf7f5;
+  --popover: #252019;
+  --popover-foreground: #faf7f5;
+  --primary: #e67e22;
+  --primary-foreground: #ffffff;
+  --secondary: #3d352d;
+  --secondary-foreground: #faf7f5;
+  --muted: #3d352d;
+  --muted-foreground: #a89888;
+  --accent: #27ae60;
+  --accent-foreground: #ffffff;
+  --destructive: #e74c3c;
+  --destructive-foreground: #ffffff;
+  --border: #3d352d;
+  --input: #3d352d;
+  --ring: #e67e22;
+  --sidebar: #1a1412;
+  --sidebar-foreground: #faf7f5;
+  --sidebar-primary: #e67e22;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #3d352d;
+  --sidebar-accent-foreground: #faf7f5;
+  --sidebar-border: #3d352d;
+  --sidebar-ring: #e67e22;
+
+  /* Dark mode animal colors */
+  --animal-dog-light: #3d2a1a;
+  --animal-dog-border: #c2410c;
+  --animal-cat-light: #2d1f3d;
+  --animal-cat-border: #9333ea;
+  --animal-bird-light: #1a2d3d;
+  --animal-bird-border: #0284c7;
+  --animal-rabbit-light: #3d3a1a;
+  --animal-rabbit-border: #ca8a04;
+  --animal-hamster-light: #3d1a1a;
+  --animal-hamster-border: #dc2626;
+  --animal-fish-light: #1a3d35;
+  --animal-fish-border: #0d9488;
+  --animal-reptile-light: #1a3d25;
+  --animal-reptile-border: #16a34a;
+  --animal-horse-light: #3d2a1a;
+  --animal-horse-border: #d97706;
+  --animal-other-light: #2d2d2d;
+  --animal-other-border: #6b7280;
+}
+
+@theme inline {
+  --font-sans: "Inter", "Inter Fallback", system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Animal colors registered in Tailwind theme */
+  --color-animal-dog: var(--animal-dog);
+  --color-animal-dog-light: var(--animal-dog-light);
+  --color-animal-dog-border: var(--animal-dog-border);
+  --color-animal-cat: var(--animal-cat);
+  --color-animal-cat-light: var(--animal-cat-light);
+  --color-animal-cat-border: var(--animal-cat-border);
+  --color-animal-bird: var(--animal-bird);
+  --color-animal-bird-light: var(--animal-bird-light);
+  --color-animal-bird-border: var(--animal-bird-border);
+  --color-animal-rabbit: var(--animal-rabbit);
+  --color-animal-rabbit-light: var(--animal-rabbit-light);
+  --color-animal-rabbit-border: var(--animal-rabbit-border);
+  --color-animal-hamster: var(--animal-hamster);
+  --color-animal-hamster-light: var(--animal-hamster-light);
+  --color-animal-hamster-border: var(--animal-hamster-border);
+  --color-animal-fish: var(--animal-fish);
+  --color-animal-fish-light: var(--animal-fish-light);
+  --color-animal-fish-border: var(--animal-fish-border);
+  --color-animal-reptile: var(--animal-reptile);
+  --color-animal-reptile-light: var(--animal-reptile-light);
+  --color-animal-reptile-border: var(--animal-reptile-border);
+  --color-animal-horse: var(--animal-horse);
+  --color-animal-horse-light: var(--animal-horse-light);
+  --color-animal-horse-border: var(--animal-horse-border);
+  --color-animal-other: var(--animal-other);
+  --color-animal-other-light: var(--animal-other-light);
+  --color-animal-other-border: var(--animal-other-border);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Prevent horizontal scroll on mobile */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d35400;
+}
+
+/* Added grass sway animation for parallax scene */
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+/* Added floating animation for pets */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}

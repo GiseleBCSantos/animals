@@ -1,6 +1,5 @@
-from time import timezone
+from django.utils import timezone
 from django.shortcuts import render
-from httpcore import Response
 from rest_framework import generics, permissions
 from django.contrib.auth import get_user_model
 from animals.llm import generate_text_for_animal
@@ -9,6 +8,9 @@ from .serializers import TutorSerializer, RegisterSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.response import Response
 
 User = get_user_model()
 
@@ -28,8 +30,10 @@ class ProfileView(generics.RetrieveAPIView):
     
 
 @extend_schema(tags=['Accounts'])
+@method_decorator(csrf_exempt, name='dispatch')
 class GenerateThoughtsView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]  
+
 
     def post(self, request):
         user = request.user
