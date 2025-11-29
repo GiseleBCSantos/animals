@@ -56,6 +56,7 @@ export default function DashboardPage() {
     species: AnimalSpecies;
     breed?: string;
     age?: number;
+    photo?: File | null;
   }) => {
     try {
       if (selectedAnimal) {
