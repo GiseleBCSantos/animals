@@ -107,7 +107,9 @@ export function useAnimalsQuery() {
           species: animalData.species,
           breed: animalData.breed || null,
           age: animalData.age || null,
-          photo: null,
+          photo: animalData.photo
+            ? URL.createObjectURL(animalData.photo)
+            : null,
           thought_of_the_day: null,
           thought_generated_at: null,
         };

@@ -1,8 +1,6 @@
 /// <reference types="vite/client" />
 import { storage } from "@/lib/utils/storage";
 
-// Removed custom ImportMetaEnv and ImportMeta interfaces to use Vite's built-in types.
-
 const API_BASE_URL =
   import.meta.env.VITE_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -23,35 +21,41 @@ class ApiClient {
   ): Promise<T> {
     const { requireAuth = true, ...fetchOptions } = options;
 
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...fetchOptions.headers,
+    const headers: Record<string, string> = {
+      ...((fetchOptions.headers as Record<string, string>) || {}),
     };
 
     if (requireAuth) {
       const token = storage.getAccessToken();
-      if (token) {
-        (headers as Record<string, string>)[
-          "Authorization"
-        ] = `Bearer ${token}`;
-      }
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    if (!(fetchOptions.body instanceof FormData)) {
+      headers["Content-Type"] = headers["Content-Type"] || "application/json";
+    }
+
+    let body: BodyInit | undefined;
+    if (fetchOptions.body instanceof FormData) {
+      body = fetchOptions.body;
+    } else if (fetchOptions.body !== undefined) {
+      body = JSON.stringify(fetchOptions.body);
     }
 
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       ...fetchOptions,
       headers,
+      body,
     });
 
     if (response.status === 401 && requireAuth) {
       const refreshed = await this.refreshToken();
       if (refreshed) {
         const newToken = storage.getAccessToken();
-        (headers as Record<string, string>)[
-          "Authorization"
-        ] = `Bearer ${newToken}`;
+        headers["Authorization"] = `Bearer ${newToken}`;
         const retryResponse = await fetch(`${this.baseUrl}${endpoint}`, {
           ...fetchOptions,
           headers,
+          body,
         });
         if (!retryResponse.ok) {
           throw await this.handleError(retryResponse);
@@ -68,9 +72,7 @@ class ApiClient {
       throw await this.handleError(response);
     }
 
-    if (response.status === 204) {
-      return {} as T;
-    }
+    if (response.status === 204) return {} as T;
 
     return response.json();
   }
@@ -79,7 +81,8 @@ class ApiClient {
     const data = await response.json().catch(() => ({}));
     return {
       status: response.status,
-      message: data.detail || data.message || "Erro desconhecido",
+      message:
+        (data as any).detail || (data as any).message || "Erro desconhecido",
       details: data,
     };
   }
@@ -114,7 +117,7 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...options,
       method: "POST",
-      body: JSON.stringify(data),
+      body: data as BodyInit,
     });
   }
 
@@ -122,7 +125,7 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...options,
       method: "PUT",
-      body: JSON.stringify(data),
+      body: data as BodyInit,
     });
   }
 
@@ -130,7 +133,7 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...options,
       method: "PATCH",
-      body: JSON.stringify(data),
+      body: data as BodyInit,
     });
   }
 
