@@ -18,3 +18,21 @@ class AnimalViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(tutor=self.request.user)
+    
+    def perform_update(self, serializer):
+        instance = self.get_object()
+
+        photo_in_request = 'photo' in self.request.data
+
+        wants_to_remove_photo = (
+            not photo_in_request and
+            instance.photo is not None 
+        )
+
+        if wants_to_remove_photo:
+            instance.photo.delete(save=False)
+            instance.photo = None
+            instance.save()
+            serializer.validated_data['photo'] = None
+
+        serializer.save()

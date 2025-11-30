@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { animalSchema } from "@/lib/validations/auth";
+import { useAnimalsQuery } from "@/hooks";
 
 export interface AnimalFormDialogProps {
   open: boolean;
@@ -41,6 +42,7 @@ interface AnimalFormValues {
   breed: string;
   age: string;
   photo: File | null;
+  initialPhoto?: string;
 }
 
 export function AnimalFormDialog({
@@ -53,12 +55,15 @@ export function AnimalFormDialog({
   const ANIMAL_CONFIG = getAnimalConfig();
   const species = Object.entries(ANIMAL_CONFIG);
 
+  const { refetch } = useAnimalsQuery();
+
   const initialValues: AnimalFormValues = {
     name: animal?.name || "",
     species: animal?.species || "dog",
     breed: animal?.breed || "",
     age: animal?.age?.toString() || "",
     photo: null,
+    initialPhoto: animal?.photo || "",
   };
 
   const handleSubmit = async (
@@ -66,15 +71,22 @@ export function AnimalFormDialog({
     { setSubmitting, resetForm }: FormikHelpers<AnimalFormValues>
   ) => {
     try {
+      console.log("Submitting animal form with values:", values);
+
       await onSubmit({
         name: values.name,
         species: values.species,
         breed: values.breed || undefined,
         age: values.age ? Number.parseInt(values.age) : undefined,
-        photo: values.photo || undefined,
+        photo:
+          values.initialPhoto === "" && values.photo === null
+            ? null
+            : values.photo || undefined,
       });
+
       resetForm();
       onOpenChange(false);
+      await refetch();
     } catch (error) {
       console.error("Error submitting animal form:", error);
     } finally {
@@ -101,31 +113,61 @@ export function AnimalFormDialog({
             <Form className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="photo">{t("animalFormPhotoLabel")}</Label>
-                <div className="flex items-center space-x-4">
-                  {values.photo && (
-                    <img
-                      src={URL.createObjectURL(values.photo)}
-                      alt={t("animalFormPhotoPreviewAlt")}
-                      className="w-16 h-16 rounded-full object-cover border border-gray-300"
-                    />
-                  )}
-                  <label
-                    htmlFor="photo"
-                    className="cursor-pointer inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
-                  >
-                    {t("animalFormChoosePhoto")}
-                    <input
-                      id="photo"
-                      name="photo"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(event) => {
-                        const file = event.currentTarget.files?.[0] || null;
-                        setFieldValue("photo", file);
-                      }}
-                    />
-                  </label>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative w-16 h-16">
+                      {values.initialPhoto || values.photo ? (
+                        <>
+                          <img
+                            src={
+                              values.photo
+                                ? URL.createObjectURL(values.photo)
+                                : values.initialPhoto
+                            }
+                            alt={t("animalFormPhotoPreviewAlt")}
+                            className="w-16 h-16 rounded-full object-cover border border-gray-300"
+                          />
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFieldValue("photo", null);
+                              setFieldValue("initialPhoto", "");
+                            }}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                          >
+                            ✕
+                          </button>
+                        </>
+                      ) : (
+                        <div className="w-16 h-16 rounded-full border border-gray-300 flex items-center justify-center text-3xl">
+                          {ANIMAL_CONFIG[values.species]?.emoji}
+                        </div>
+                      )}
+                    </div>
+
+                    <label
+                      htmlFor="photo"
+                      className="cursor-pointer inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+                    >
+                      {t("animalFormChoosePhoto")}
+                      <input
+                        id="photo"
+                        name="photo"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onClick={(event) => {
+                          (event.target as HTMLInputElement).value = "";
+                        }}
+                        onChange={(event) => {
+                          const file = event.currentTarget.files?.[0] || null;
+                          setFieldValue("photo", file);
+                          setFieldValue("initialPhoto", "");
+                        }}
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
 
