@@ -181,7 +181,11 @@ export default function DashboardPage() {
                     {t("dashboardAllSpecies")}
                   </SelectItem>
                   {SPECIES_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+                    <SelectItem
+                      key={option.value}
+                      value={option.value}
+                      display={`${option.emoji} ${option.label}`}
+                    >
                       {option.emoji} {option.label}
                     </SelectItem>
                   ))}
