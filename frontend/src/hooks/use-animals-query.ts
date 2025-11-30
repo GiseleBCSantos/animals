@@ -7,6 +7,7 @@ import {
 import type { Animal } from "@/lib/types";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { authService } from "@/lib/services/auth";
+import { useEffect } from "react";
 
 // Mock data for dev mode
 const MOCK_ANIMALS: Animal[] = [
@@ -85,16 +86,18 @@ const ANIMALS_KEY = ["animals"];
 export function useAnimalsQuery() {
   const { isDevMode } = useAuthStore();
   const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ANIMALS_KEY,
+    queryKey: [ANIMALS_KEY, user?.id],
     queryFn: async () => {
-      if (isDevMode) {
-        return MOCK_ANIMALS;
-      }
+      if (isDevMode) return MOCK_ANIMALS;
       const paginated = await animalsService.getAll();
       return paginated.results;
     },
+    enabled: !!user,
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 
   const createMutation = useMutation({
@@ -169,6 +172,12 @@ export function useAnimalsQuery() {
       return authService.generateThoughts();
     },
   });
+
+  useEffect(() => {
+    if (user) {
+      queryClient.invalidateQueries({ queryKey: ANIMALS_KEY });
+    }
+  }, [user, queryClient]);
 
   return {
     animals: data || [],
