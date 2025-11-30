@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Animal } from "@/lib/types";
-import { ANIMAL_CONFIG } from "@/lib/constants/animals";
+import { getAnimalConfig } from "@/lib/constants/animals";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -26,6 +26,8 @@ export function DeleteConfirmationDialog({
   onConfirm,
 }: DeleteConfirmationDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const ANIMAL_CONFIG = getAnimalConfig();
+  const species = Object.entries(ANIMAL_CONFIG);
 
   const handleConfirm = async () => {
     setIsLoading(true);

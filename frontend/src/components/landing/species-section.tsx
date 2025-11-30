@@ -1,9 +1,12 @@
 import { Parallax } from "react-scroll-parallax";
-import { ANIMAL_CONFIG } from "@/lib/constants/animals";
+import { getAnimalConfig } from "@/lib/constants/animals";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
-export function SpeciesSection() {
+export const SpeciesSection = () => {
+  const ANIMAL_CONFIG = getAnimalConfig();
   const species = Object.entries(ANIMAL_CONFIG);
+  const { t } = useTranslation();
 
   return (
     <section className="py-16 md:py-24 overflow-hidden relative">
@@ -57,11 +60,10 @@ export function SpeciesSection() {
         <Parallax speed={3}>
           <div className="text-center mb-10 md:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 text-balance">
-              Suportamos todos os tipos de pets
+              {t("speciesSupportAllPets")}
             </h2>
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
-              De caes e gatos a peixes e repteis, todos os seus companheiros sao
-              bem-vindos!
+              {t("speciesFromDogsToFish")}
             </p>
           </div>
         </Parallax>
@@ -97,4 +99,4 @@ export function SpeciesSection() {
       </div>
     </section>
   );
-}
+};

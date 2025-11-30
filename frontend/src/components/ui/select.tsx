@@ -160,9 +160,16 @@ function SelectContent({ children, className, ...props }: SelectContentProps) {
 
 export interface SelectItemProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
+  display?: string;
 }
 
-function SelectItem({ value, children, className, ...props }: SelectItemProps) {
+function SelectItem({
+  value,
+  display,
+  children,
+  className,
+  ...props
+}: SelectItemProps) {
   const {
     value: selectedValue,
     onValueChange,
@@ -171,16 +178,16 @@ function SelectItem({ value, children, className, ...props }: SelectItemProps) {
   const isSelected = value === selectedValue;
 
   React.useEffect(() => {
-    if (isSelected && typeof children === "string") {
-      setDisplayValue(children);
+    if (isSelected) {
+      setDisplayValue(
+        display || (typeof children === "string" ? children : "")
+      );
     }
-  }, [isSelected, children, setDisplayValue]);
+  }, [isSelected, display, children, setDisplayValue]);
 
   const handleClick = () => {
     onValueChange(value);
-    if (typeof children === "string") {
-      setDisplayValue(children);
-    }
+    setDisplayValue(display || (typeof children === "string" ? children : ""));
   };
 
   return (

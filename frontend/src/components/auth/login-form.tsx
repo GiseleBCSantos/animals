@@ -17,6 +17,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { showToast } from "@/lib/utils/toast";
 import { loginSchema } from "@/lib/validations/auth";
 import { PawPrint, Eye, EyeOff } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface LoginValues {
   username: string;
@@ -28,6 +29,7 @@ export function LoginForm() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const { t } = useTranslation();
   const initialValues: LoginValues = {
     username: "",
     password: "",
@@ -40,15 +42,15 @@ export function LoginForm() {
     try {
       await login(values);
       showToast({
-        title: "Bem-vindo de volta!",
-        description: "Login realizado com sucesso.",
+        title: t("welcomeBack"),
+        description: t("loginSuccess"),
       });
       navigate("/dashboard");
     } catch (error) {
       console.error("[v0] Login error:", error);
       showToast({
-        title: "Erro no login",
-        description: "Usuario ou senha incorretos.",
+        title: t("loginError"),
+        description: t("incorrectUsernameOrPassword"),
         variant: "destructive",
       });
     } finally {
@@ -65,10 +67,8 @@ export function LoginForm() {
           </div>
         </div>
         <div>
-          <CardTitle className="text-2xl">Entrar</CardTitle>
-          <CardDescription>
-            Acesse sua conta para gerenciar seus pets
-          </CardDescription>
+          <CardTitle className="text-2xl">{t("login")}</CardTitle>
+          <CardDescription>{t("loginDescription")}</CardDescription>
         </div>
       </CardHeader>
 
@@ -81,13 +81,13 @@ export function LoginForm() {
           <Form>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Usuario</Label>
+                <Label htmlFor="username">{t("username")}</Label>
                 <Field
                   as={Input}
                   id="username"
                   name="username"
                   type="text"
-                  placeholder="Seu nome de usuario"
+                  placeholder={t("usernameRegisterPlaceholder")}
                   autoComplete="username"
                 />
                 {errors.username && touched.username && (
@@ -96,14 +96,14 @@ export function LoginForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
+                <Label htmlFor="password">{t("password")}</Label>
                 <div className="relative">
                   <Field
                     as={Input}
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Sua senha"
+                    placeholder={t("passwordRegisterPlaceholder")}
                     autoComplete="current-password"
                     className="pr-10"
                   />
@@ -129,7 +129,7 @@ export function LoginForm() {
                   to="/forgot-password"
                   className="text-sm text-primary hover:underline"
                 >
-                  Esqueceu a senha?
+                  {t("forgotPassword")}
                 </Link>
               </div>
             </CardContent>
@@ -141,16 +141,16 @@ export function LoginForm() {
                 disabled={isSubmitting}
               >
                 {isSubmitting && <Spinner className="mr-2" />}
-                Entrar
+                {t("login")}
               </Button>
 
               <p className="text-sm text-muted-foreground text-center">
-                Nao tem uma conta?{" "}
+                {t("alreadyHaveAccount")}{" "}
                 <Link
                   to="/register"
                   className="text-primary font-medium hover:underline"
                 >
-                  Criar conta
+                  {t("createAccount")}
                 </Link>
               </p>
             </CardFooter>
