@@ -90,22 +90,27 @@ export function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background p-4">
-          <nav className="flex flex-col gap-3">
-            <LanguageSwitcher />
+        <div className="md:hidden border-t border-border bg-background px-4 py-6">
+          <nav className="flex flex-col gap-4 flex flex-col items-center">
+            <div className="pb-2 border-b border-border/50 ">
+              <LanguageSwitcher />
+            </div>
+
             {isAuthenticated ? (
               <>
                 <Link
                   to="/dashboard"
-                  className="text-sm font-medium py-2"
+                  className="flex items-center gap-2 text-base font-medium py-2 text-foreground"
                   onClick={() => setMobileMenuOpen(false)}
                 >
+                  <PawPrint className="h-4 w-4 text-primary" />
                   {t("myPets")}
                 </Link>
+
                 <Button
                   variant="ghost"
                   onClick={logout}
-                  className="justify-start text-destructive"
+                  className="justify-start text-destructive text-base py-2"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   {t("logout")}
@@ -114,12 +119,15 @@ export function Header() {
             ) : (
               <>
                 <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full">
+                  <Button variant="secondary" className="w-full py-2 text-base">
                     {t("login")}
                   </Button>
                 </Link>
+
                 <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full">Criar Conta</Button>
+                  <Button className="w-full py-2 text-base">
+                    {t("register")}
+                  </Button>
                 </Link>
               </>
             )}
