@@ -16,9 +16,6 @@ function toFormData(data: CreateAnimalData | UpdateAnimalData) {
   Object.entries(data).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       formData.append(key, value instanceof File ? value : String(value));
-      console.log(`Appending to FormData: ${key} = ${value}`);
-
-      console.log("formData", formData);
     }
   });
   return formData;
