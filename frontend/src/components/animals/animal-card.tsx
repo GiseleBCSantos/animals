@@ -1,11 +1,12 @@
 import type { Animal } from "@/lib/types";
-import { ANIMAL_CONFIG } from "@/lib/constants/animals";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trash2, Edit2, MessageCircle, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { getAnimalConfig } from "@/lib/constants/animals";
+import { useTranslation } from "react-i18next";
 
 export interface AnimalCardProps {
   animal: Animal;
@@ -13,8 +14,10 @@ export interface AnimalCardProps {
   onDelete?: (animal: Animal) => void;
 }
 
-export function AnimalCard({ animal, onEdit, onDelete }: AnimalCardProps) {
-  const config = ANIMAL_CONFIG[animal.species] || ANIMAL_CONFIG.other;
+export const AnimalCard = ({ animal, onEdit, onDelete }: AnimalCardProps) => {
+  const { t } = useTranslation();
+  const ANIMAL_CONFIG = getAnimalConfig();
+  const config = ANIMAL_CONFIG[animal.species];
 
   return (
     <motion.div
@@ -78,7 +81,7 @@ export function AnimalCard({ animal, onEdit, onDelete }: AnimalCardProps) {
             {animal.breed && (
               <div className="bg-white/60 dark:bg-black/20 rounded-lg px-2 md:px-3 py-1.5 md:py-2">
                 <span className="text-muted-foreground block text-xs">
-                  Raca
+                  {t("animalCardBreed")}
                 </span>
                 <span className="font-medium text-sm truncate block">
                   {animal.breed}
@@ -88,10 +91,11 @@ export function AnimalCard({ animal, onEdit, onDelete }: AnimalCardProps) {
             {animal.age !== null && (
               <div className="bg-white/60 dark:bg-black/20 rounded-lg px-2 md:px-3 py-1.5 md:py-2">
                 <span className="text-muted-foreground block text-xs">
-                  Idade
+                  {t("animalCardAge")}
                 </span>
                 <span className="font-medium text-sm">
-                  {animal.age} {animal.age === 1 ? "ano" : "anos"}
+                  {animal.age}{" "}
+                  {t(animal.age === 1 ? "animalCardYear" : "animalCardYears")}
                 </span>
               </div>
             )}
@@ -100,9 +104,9 @@ export function AnimalCard({ animal, onEdit, onDelete }: AnimalCardProps) {
           {animal.thought_of_the_day && (
             <div className="bg-white/80 dark:bg-black/30 rounded-lg md:rounded-xl p-2 md:p-3 border border-white/50 dark:border-white/10">
               <div className="flex items-center gap-2 mb-1">
-                <MessageCircle className="h-3 w-3 md:h-4 md:w-4 text-primary flex-shrink-0" />
+                <MessageCircle className="h-3 w-3 md:h-4 md:w-4 text-primary shrink-0" />
                 <span className="text-xs font-medium text-primary flex items-center gap-1">
-                  Pensamento do dia
+                  {t("animalCardThoughtOfTheDay")}
                   <Sparkles className="h-3 w-3" />
                 </span>
               </div>
@@ -116,11 +120,11 @@ export function AnimalCard({ animal, onEdit, onDelete }: AnimalCardProps) {
             <Button
               variant="outline"
               size="sm"
-              className="flex-1 bg-white/80 dark:bg-black/30 hover:bg-white dark:hover:bg-black/50 text-xs md:text-sm h-8 md:h-9"
+              className="flex-1 bg-white/80 dark:bg-black/30 dark:hover:bg-black/50 text-xs md:text-sm h-8 md:h-9"
               onClick={() => onEdit?.(animal)}
             >
               <Edit2 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
-              Editar
+              {t("animalCardEdit")}
             </Button>
             <Button
               variant="outline"
@@ -135,4 +139,4 @@ export function AnimalCard({ animal, onEdit, onDelete }: AnimalCardProps) {
       </Card>
     </motion.div>
   );
-}
+};

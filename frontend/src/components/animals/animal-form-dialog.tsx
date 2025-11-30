@@ -1,6 +1,7 @@
 import { Formik, Form, Field, type FormikHelpers } from "formik";
 import type { Animal, AnimalSpecies } from "@/lib/types";
-import { SPECIES_OPTIONS } from "@/lib/constants/animals";
+import { getAnimalConfig } from "@/lib/constants/animals";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -48,6 +49,10 @@ export function AnimalFormDialog({
   animal,
   onSubmit,
 }: AnimalFormDialogProps) {
+  const { t } = useTranslation();
+  const ANIMAL_CONFIG = getAnimalConfig();
+  const species = Object.entries(ANIMAL_CONFIG);
+
   const initialValues: AnimalFormValues = {
     name: animal?.name || "",
     species: animal?.species || "dog",
@@ -82,7 +87,7 @@ export function AnimalFormDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {animal ? "Editar Pet" : "Adicionar Novo Pet"}
+            {animal ? t("animalFormEditPet") : t("animalFormAddNewPet")}
           </DialogTitle>
         </DialogHeader>
 
@@ -95,12 +100,12 @@ export function AnimalFormDialog({
           {({ values, errors, touched, isSubmitting, setFieldValue }) => (
             <Form className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="photo">Foto do Pet</Label>
+                <Label htmlFor="photo">{t("animalFormPhotoLabel")}</Label>
                 <div className="flex items-center space-x-4">
                   {values.photo && (
                     <img
                       src={URL.createObjectURL(values.photo)}
-                      alt="Preview"
+                      alt={t("animalFormPhotoPreviewAlt")}
                       className="w-16 h-16 rounded-full object-cover border border-gray-300"
                     />
                   )}
@@ -108,7 +113,7 @@ export function AnimalFormDialog({
                     htmlFor="photo"
                     className="cursor-pointer inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
                   >
-                    Escolher Foto
+                    {t("animalFormChoosePhoto")}
                     <input
                       id="photo"
                       name="photo"
@@ -125,12 +130,12 @@ export function AnimalFormDialog({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="name">Nome *</Label>
+                <Label htmlFor="name">{t("animalFormNameLabel")}</Label>
                 <Field
                   as={Input}
                   id="name"
                   name="name"
-                  placeholder="Nome do seu pet"
+                  placeholder={t("animalFormNamePlaceholder")}
                 />
                 {errors.name && touched.name && (
                   <p className="text-sm text-destructive">{errors.name}</p>
@@ -138,17 +143,19 @@ export function AnimalFormDialog({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="species">Especie *</Label>
+                <Label htmlFor="species">{t("animalFormSpeciesLabel")}</Label>
                 <Select
                   value={values.species}
                   onValueChange={(value) => setFieldValue("species", value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione a especie" />
+                    <SelectValue
+                      placeholder={t("animalFormSpeciesPlaceholder")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    {SPECIES_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
+                    {species.map(([key, option]) => (
+                      <SelectItem key={key} value={key}>
                         {option.emoji} {option.label}
                       </SelectItem>
                     ))}
@@ -157,17 +164,17 @@ export function AnimalFormDialog({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="breed">Raca</Label>
+                <Label htmlFor="breed">{t("animalFormBreedLabel")}</Label>
                 <Field
                   as={Input}
                   id="breed"
                   name="breed"
-                  placeholder="Raca do seu pet (opcional)"
+                  placeholder={t("animalFormBreedPlaceholder")}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="age">Idade (anos)</Label>
+                <Label htmlFor="age">{t("animalFormAgeLabel")}</Label>
                 <Field
                   as={Input}
                   id="age"
@@ -175,7 +182,7 @@ export function AnimalFormDialog({
                   type="number"
                   min="0"
                   max="100"
-                  placeholder="Idade em anos (opcional)"
+                  placeholder={t("animalFormAgePlaceholder")}
                 />
                 {errors.age && touched.age && (
                   <p className="text-sm text-destructive">{errors.age}</p>
@@ -188,11 +195,11 @@ export function AnimalFormDialog({
                   variant="outline"
                   onClick={() => onOpenChange(false)}
                 >
-                  Cancelar
+                  {t("animalFormCancel")}
                 </Button>
                 <Button type="submit" disabled={isSubmitting || !values.name}>
                   {isSubmitting && <Spinner className="mr-2" />}
-                  {animal ? "Salvar" : "Adicionar"}
+                  {animal ? t("animalFormSave") : t("animalFormAdd")}
                 </Button>
               </DialogFooter>
             </Form>

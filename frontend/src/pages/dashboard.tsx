@@ -10,7 +10,6 @@ import { useAnimalsQuery } from "@/hooks/use-animals-query";
 import { useAnimalsStore } from "@/lib/stores/animals-store";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import type { Animal, AnimalSpecies } from "@/lib/types";
-import { SPECIES_OPTIONS } from "@/lib/constants/animals";
 import {
   Plus,
   Sparkles,
@@ -30,11 +29,22 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "react-toastify";
+import { getAnimalConfig } from "@/lib/constants/animals";
+import { useTranslation } from "react-i18next";
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const { user, isDevMode } = useAuthStore();
   const { searchQuery, speciesFilter, setSearchQuery, setSpeciesFilter } =
     useAnimalsStore();
+  const ANIMAL_CONFIG = getAnimalConfig();
+  const SPECIES_OPTIONS = Object.entries(ANIMAL_CONFIG).map(
+    ([key, option]) => ({
+      value: key,
+      label: option.label,
+      emoji: option.emoji,
+    })
+  );
 
   const {
     animals,
@@ -61,14 +71,14 @@ export default function DashboardPage() {
     try {
       if (selectedAnimal) {
         await updateAnimal(selectedAnimal.id, data);
-        toast(`${data.name} foi atualizado com sucesso.`);
+        toast(t("dashboardPetUpdated", { name: data.name }));
       } else {
         await createAnimal(data);
-        toast(`${data.name} foi adicionado a sua familia.`);
+        toast(t("dashboardPetAdded", { name: data.name }));
       }
       setSelectedAnimal(null);
     } catch {
-      toast("Nao foi possivel salvar o pet.", { type: "error" });
+      toast(t("dashboardCouldNotSavePet"), { type: "error" });
       throw new Error("Failed to save");
     }
   };
@@ -77,10 +87,10 @@ export default function DashboardPage() {
     if (!selectedAnimal) return;
     try {
       await deleteAnimal(selectedAnimal.id);
-      toast(`${selectedAnimal.name} foi removido da sua lista.`);
+      toast(t("dashboardPetRemoved", { name: selectedAnimal.name }));
       setSelectedAnimal(null);
     } catch {
-      toast("Nao foi possivel remover o pet.", { type: "error" });
+      toast(t("dashboardCouldNotRemovePet"), { type: "error" });
     }
   };
 
@@ -89,14 +99,14 @@ export default function DashboardPage() {
     try {
       if (isDevMode) {
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        toast("Pensamentos gerados! Seus pets tem novos pensamentos do dia.");
+        toast(t("dashboardThoughtsGenerated"));
       } else {
         await generateThoughtOfTheDay();
         await refetch();
-        toast("Pensamentos gerados! Seus pets tem novos pensamentos do dia.");
+        toast(t("dashboardThoughtsGenerated"));
       }
     } catch {
-      toast("Nao foi possivel gerar os pensamentos.", { type: "error" });
+      toast(t("dashboardCouldNotGenerateThoughts"), { type: "error" });
     } finally {
       setIsGeneratingThoughts(false);
     }
@@ -118,9 +128,9 @@ export default function DashboardPage() {
       <main className="flex-1 container px-4 md:px-6 py-6 md:py-8">
         {isDevMode && (
           <Alert className="mb-4 md:mb-6 border-amber-500/50 bg-amber-50 text-amber-900">
-            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            <AlertCircle className="h-4 w-4 shrink-0" />
             <AlertDescription className="text-sm">
-              Modo de desenvolvimento ativo. Os dados exibidos sao mockados.
+              {t("dashboardDevMode")}
             </AlertDescription>
           </Alert>
         )}
@@ -131,10 +141,10 @@ export default function DashboardPage() {
           className="mb-6 md:mb-8"
         >
           <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Ola, {user?.name || "Visitante"}!
+            {t("dashboardHello", { name: user?.name || t("dashboardGuest") })}
           </h1>
           <p className="text-sm md:text-base text-muted-foreground">
-            Gerencie seus pets e acompanhe suas informacoes.
+            {t("dashboardManageYourPets")}
           </p>
         </motion.div>
 
@@ -148,7 +158,7 @@ export default function DashboardPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Buscar pets..."
+                placeholder={t("dashboardSearchPets")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -163,11 +173,13 @@ export default function DashboardPage() {
                 }
               >
                 <SelectTrigger>
-                  <Filter className="h-4 w-4 mr-2 flex-shrink-0" />
-                  <SelectValue placeholder="Filtrar" />
+                  <Filter className="h-4 w-4 mr-2 shrink-0" />
+                  <SelectValue placeholder={t("dashboardFilter")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas as especies</SelectItem>
+                  <SelectItem value="all">
+                    {t("dashboardAllSpecies")}
+                  </SelectItem>
                   {SPECIES_OPTIONS.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.emoji} {option.label}
@@ -189,9 +201,11 @@ export default function DashboardPage() {
                 {isGeneratingThoughts ? (
                   <Spinner className="mr-2" />
                 ) : (
-                  <Sparkles className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <Sparkles className="h-4 w-4 mr-2 shrink-0" />
                 )}
-                <span className="truncate">Gerar Pensamentos</span>
+                <span className="truncate">
+                  {t("dashboardGenerateThoughts")}
+                </span>
               </Button>
             )}
             <Button
@@ -201,8 +215,8 @@ export default function DashboardPage() {
               }}
               className="w-full sm:w-auto"
             >
-              <Plus className="h-4 w-4 mr-2 flex-shrink-0" />
-              Adicionar Pet
+              <Plus className="h-4 w-4 mr-2 shrink-0" />
+              {t("dashboardAddPet")}
             </Button>
           </div>
         </motion.div>
@@ -223,11 +237,10 @@ export default function DashboardPage() {
             {animals.length === 0 ? (
               <>
                 <h3 className="text-lg md:text-xl font-semibold mb-2">
-                  Nenhum pet cadastrado
+                  {t("dashboardNoPetsRegistered")}
                 </h3>
                 <p className="text-sm md:text-base text-muted-foreground mb-6 max-w-md">
-                  Comece adicionando seu primeiro pet para acompanhar todas as
-                  informacoes importantes.
+                  {t("dashboardStartByAdding")}
                 </p>
                 <Button
                   onClick={() => {
@@ -236,16 +249,16 @@ export default function DashboardPage() {
                   }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Adicionar Primeiro Pet
+                  {t("dashboardAddFirstPet")}
                 </Button>
               </>
             ) : (
               <>
                 <h3 className="text-lg md:text-xl font-semibold mb-2">
-                  Nenhum pet encontrado
+                  {t("dashboardNoPetsFound")}
                 </h3>
                 <p className="text-sm md:text-base text-muted-foreground">
-                  Tente ajustar os filtros de busca.
+                  {t("dashboardTryAdjustingFilters")}
                 </p>
               </>
             )}

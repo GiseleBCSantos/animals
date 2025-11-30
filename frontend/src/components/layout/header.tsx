@@ -10,10 +10,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User, LogOut, PawPrint, Menu } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "../ui/language-switcher";
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -26,13 +29,14 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
+          <LanguageSwitcher />
           {isAuthenticated ? (
             <>
               <Link
                 to="/dashboard"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                Meus Pets
+                {t("myPets")}
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -49,7 +53,7 @@ export function Header() {
                   <DropdownMenuItem>
                     <Link to="/dashboard" className="flex items-center">
                       <PawPrint className="mr-2 h-4 w-4" />
-                      Meus Pets
+                      {t("myPets")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -58,7 +62,7 @@ export function Header() {
                     className="text-destructive"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Sair
+                    {t("logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -66,10 +70,10 @@ export function Header() {
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost">Entrar</Button>
+                <Button variant="ghost">{t("login")}</Button>
               </Link>
               <Link to="/register">
-                <Button>Criar Conta</Button>
+                <Button>{t("register")}</Button>
               </Link>
             </>
           )}
@@ -88,6 +92,7 @@ export function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border bg-background p-4">
           <nav className="flex flex-col gap-3">
+            <LanguageSwitcher />
             {isAuthenticated ? (
               <>
                 <Link
@@ -95,7 +100,7 @@ export function Header() {
                   className="text-sm font-medium py-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Meus Pets
+                  {t("myPets")}
                 </Link>
                 <Button
                   variant="ghost"
@@ -103,14 +108,14 @@ export function Header() {
                   className="justify-start text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sair
+                  {t("logout")}
                 </Button>
               </>
             ) : (
               <>
                 <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
                   <Button variant="ghost" className="w-full">
-                    Entrar
+                    {t("login")}
                   </Button>
                 </Link>
                 <Link to="/register" onClick={() => setMobileMenuOpen(false)}>

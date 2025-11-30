@@ -16,6 +16,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { showToast } from "@/lib/utils/toast";
 import { forgotPasswordSchema } from "@/lib/validations/auth";
 import { PawPrint, ArrowLeft, Mail } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ForgotPasswordValues {
   email: string;
@@ -25,6 +26,7 @@ export function ForgotPasswordForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState("");
 
+  const { t } = useTranslation();
   const initialValues: ForgotPasswordValues = {
     email: "",
   };
@@ -38,13 +40,13 @@ export function ForgotPasswordForm() {
       setSubmittedEmail(values.email);
       setIsSubmitted(true);
       showToast({
-        title: "Email enviado!",
-        description: "Verifique sua caixa de entrada.",
+        title: t("emailSent"),
+        description: t("checkYourInbox"),
       });
     } catch {
       showToast({
-        title: "Erro",
-        description: "Nao foi possivel enviar o email.",
+        title: t("error"),
+        description: t("couldNotSendEmail"),
         variant: "destructive",
       });
     } finally {
@@ -62,11 +64,11 @@ export function ForgotPasswordForm() {
             </div>
           </div>
           <div>
-            <CardTitle className="text-2xl">Verifique seu email</CardTitle>
+            <CardTitle className="text-2xl">{t("checkYourEmail")}</CardTitle>
             <CardDescription className="mt-2">
-              Enviamos instrucoes de recuperacao para{" "}
-              <strong>{submittedEmail}</strong>. Verifique sua caixa de entrada
-              e spam.
+              {t("sentInstructions", {
+                email: <strong>{submittedEmail}</strong>,
+              })}
             </CardDescription>
           </div>
         </CardHeader>
@@ -77,7 +79,7 @@ export function ForgotPasswordForm() {
               className="w-full h-12 text-base rounded-xl bg-transparent"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar para o login
+              {t("backToLogin")}
             </Button>
           </Link>
         </CardFooter>
@@ -94,10 +96,8 @@ export function ForgotPasswordForm() {
           </div>
         </div>
         <div>
-          <CardTitle className="text-2xl">Recuperar Senha</CardTitle>
-          <CardDescription>
-            Informe seu email e enviaremos instrucoes para redefinir sua senha
-          </CardDescription>
+          <CardTitle className="text-2xl">{t("forgotPasswordTitle")}</CardTitle>
+          <CardDescription>{t("forgotPasswordDescription")}</CardDescription>
         </div>
       </CardHeader>
 
@@ -110,13 +110,13 @@ export function ForgotPasswordForm() {
           <Form>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("email")}</Label>
                 <Field
                   as={Input}
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="seu@email.com"
+                  placeholder={t("emailPlaceholder")}
                   autoComplete="email"
                 />
                 {errors.email && touched.email && (
@@ -132,7 +132,7 @@ export function ForgotPasswordForm() {
                 disabled={isSubmitting}
               >
                 {isSubmitting && <Spinner className="mr-2" />}
-                Enviar Instrucoes
+                {t("sendInstructions")}
               </Button>
 
               <Link
@@ -140,7 +140,7 @@ export function ForgotPasswordForm() {
                 className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-1"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Voltar para o login
+                {t("backToLogin")}
               </Link>
             </CardFooter>
           </Form>
