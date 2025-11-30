@@ -197,7 +197,11 @@ export function AnimalFormDialog({
                   </SelectTrigger>
                   <SelectContent>
                     {species.map(([key, option]) => (
-                      <SelectItem key={key} value={key}>
+                      <SelectItem
+                        key={key}
+                        value={key}
+                        display={`${option.emoji} ${option.label}`}
+                      >
                         {option.emoji} {option.label}
                       </SelectItem>
                     ))}
